@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tif图片显示测试</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    <style>
+        {#p{font-size: 0;text-align: center}#}
+
+    </style>
+    <SCRIPT LANGUAGE="JavaScript">
+        <!--
+        //图片按比例缩放,可输入参数设定初始大小
+        function resizeimg(ImgD, iwidth, iheight) {
+            var image = new Image();
+            image.src = ImgD.src;
+            if (image.width > 0 && image.height > 0) {
+                if (image.width / image.height >= iwidth / iheight) {
+                    if (image.width > iwidth) {
+                        ImgD.width = iwidth;
+                        ImgD.height = (image.height * iwidth) / image.width;
+                    } else {
+                        ImgD.width = image.width;
+                        ImgD.height = image.height;
+                    }
+                    ImgD.alt = image.width + "×" + image.height;
+                } else {
+                    if (image.height > iheight) {
+                        ImgD.height = iheight;
+                        ImgD.width = (image.width * iheight) / image.height;
+                    } else {
+                        ImgD.width = image.width;
+                        ImgD.height = image.height;
+                    }
+                    ImgD.alt = image.width + "×" + image.height;
+                }
+                ImgD.style.cursor = "pointer"; //改变鼠标指针
+                ImgD.onclick = function () {
+                    window.open(this.src);
+                } //点击打开大图片
+                if (navigator.userAgent.toLowerCase().indexOf("ie") > -1) { //判断浏览器，如果是IE
+                    ImgD.title = "请使用鼠标滚轮缩放图片，点击图片可在新窗口打开";
+                    ImgD.onmousewheel = function img_zoom() //滚轮缩放
+                    {
+                        var zoom = parseInt(this.style.zoom, 10) || 100;
+                        zoom += event.wheelDelta / 12;
+                        if (zoom > 0) this.style.zoom = zoom + "%";
+                        return false;
+                    }
+                } else { //如果不是IE
+                    ImgD.title = "点击图片可在新窗口打开";
+                }
+            }
+        }
+
+        //-->
+    </SCRIPT>
+    <script language="javascript">
+        function bigimg(obj) {
+            //obj是一个对象，初始时obj并没有zoom属性，所以给zoom赋值为100；
+            var zoom = parseInt(obj.style.zoom) || 100;
+            //每次滚动鼠标时，改变zoom的大小
+            //event.wheelDelta有两个值，120，-120，取值情况取决于滚动鼠标的方向；
+            zoom += event.wheelDelta / 12;//每次滚动加减10；
+            if (zoom > 0) {
+                obj.style.zoom = zoom + "%";//更改后的zoom赋值给obj
+                console.log(obj.style.zoom);
+            }
+            return false;
+
+        }
+    </script>
+</head>
+<style type="text/css">
+    .box {
+         text-align: center; /*让div内部文字居中*/
+        background-color: #fff;
+        border-radius: 20px;
+        width: 1000px;
+        height: 300px;
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 500px;
+    }
+</style>
+<body>
+<div class="box">
+    <h3 align="center">tif图片显示</h3>
+    <table class="table table-bordered">
+        {% if L%hang == 0 %}
+            {% if L//hang %}
+                {% for i in range(1,H) %}
+                    {% if i%hang == 0 %}
+
+                        <tr>
+                            {% for i in range(i-hang,i) %}
+                                <td>
+                                    <a href="http://127.0.0.1:5000/static/tifToPng/{{ dir[i] }}"
+                                       onload="javascript:resizeimg(this,198,235)" onmousewheel="bigimg(this)">{{ dir[i] }}</a>
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+        {% if L%hang != 0 %}
+            {% if L//hang %}
+                {% for i in range(1,H) %}
+                    {% if i%hang == 0 %}
+
+                        <tr>
+                            {% for i in range(i-hang,i) %}
+                                <td>
+                                    <a href="http://127.0.0.1:5000/static/tifToPng/{{ dir[i] }}"
+                                       onload="javascript:resizeimg(this,198,235)" onmousewheel="bigimg(this)">{{ dir[i] }}</a>
+
+                                </td>
+                            {% endfor %}
+                        </tr>
+
+                    {% endif %}
+                    {% if i>L//hang*hang %}
+                        <td>
+                            <a href="http://127.0.0.1:5000/static/tifToPng/{{ dir[i-1] }}"
+                               onload="javascript:resizeimg(this,198,235)" onmousewheel="bigimg(this)">{{ dir[i-1] }}</a>
+
+                        </td>
+
+
+
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if L//hang==0 %}
+
+                <tr>
+                    {% for i in range(0,L) %}
+                        <td>
+                            <a href="http://127.0.0.1:5000/static/tifToPng/{{ dir[i] }}"
+                               onload="javascript:resizeimg(this,198,235)" onmousewheel="bigimg(this)">{{ dir[i] }}</a>
+
+                        </td>
+                    {% endfor %}
+                </tr>
+
+            {% endif %}
+        {% endif %}
+    </table>
+</div>
+</body>
+</html>

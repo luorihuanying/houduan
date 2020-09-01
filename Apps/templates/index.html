@@ -1,0 +1,30 @@
+<!-- index.html -->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO Test</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            namespace = '/socketio';
+            var socket = io.connect(location.protocol
+            + '//' + document.domain + ':'
+            + location.port + namespace);
+            var f = location.protocol
+            + '//' + document.domain + ':'
+            + location.port + namespace;
+            socket.on('server_response', function (msg) {
+                $('#content').append('<br>' + $('<div/>').text('id' + ':' + msg.id +
+                    '    接收时间' + ':' + msg.createTime + '    接收数据' + ':' + msg.data +'\n').html());
+            });
+        });
+
+    </script>
+</head>
+<body>
+<h2>农业物联网数据监控</h2>
+<div id='content'></div>
+</body>
+</html>
