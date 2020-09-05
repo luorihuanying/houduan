@@ -229,7 +229,7 @@ class getCameraData:
                 ill.append(i['data']['illumination'])
                 pre.append(i['data']['pressure'])
                 tem.append(i['data']['temperature'])
-        avgMaxMin = [[np.max(hum),np.min(hum),round(np.average(hum),4)],[np.max(ill),np.min(ill),round(np.average(hum),4)],[np.max(pre),np.min(pre),round(np.average(hum),4)],[np.max(tem),np.min(tem),round(np.average(hum),4)]]
+        avgMaxMin = [[np.max(hum),np.min(hum),round(np.average(hum),4)],[np.max(ill),np.min(ill),round(np.average(ill),4)],[np.max(pre),np.min(pre),round(np.average(pre),4)],[np.max(tem),np.min(tem),round(np.average(tem),4)]]
         ti = self.getHour()
         for i in range(len(ti)):
             for j in range(len(t)):

@@ -64,7 +64,7 @@ class histotydataHandle():
         limit = args.get("limit")
         startTime = args.get("startTime")
         endTime = args.get("endTime")
-        print(groupName,devName,dataPoints,page,limit,startTime,endTime)
+        print('page:',page,'limit',limit)
         try:
             if groupName==None and devName==None and dataPoints==None and page==None and limit==None and startTime==None and endTime==None:
                 with eng.connect() as con:
@@ -79,10 +79,11 @@ class histotydataHandle():
                                 "groupName":row.groupName,
                                 "value": row.value}
                         self.conditions.append(data)
+                    if len(self.conditions)>1000:
+                        self.conditions = self.conditions[:1000]
                     data = {"code": "200", "data": {"historyDataList":self.conditions,'total':len(self.conditions)}}
                     return data
             else:
-                page = page - 1
                 self.dp = dataPoints
                 startTime = timestamp_to_str(startTime)
                 endTime = timestamp_to_str(endTime)
@@ -118,19 +119,18 @@ class histotydataHandle():
                                     self.conditions = []
                     else:
                         self.conditions = []
+                total = len(self.conditions)
+                if len(self.conditions)>1000:
+                    self.conditions = self.conditions[:1000]
                 if len(self.conditions) <= limit:
-                    data = {"code": 200, "data": {"historyDataList":self.conditions,'total':len(self.conditions)}}
-
-                elif len(self.conditions) > limit and page == 0:
-                    data = {"code": 200, "data": {"historyDataList":self.conditions[0:limit],'total':len(self.conditions[0:limit])}}
+                    data = {"code": 200, "data": {"historyDataList":self.conditions,'total':total}}
+                if limit * page <= len(self.conditions):
+                    data = {"code": 200, "data": {"historyDataList":self.conditions[limit * (page - 1):limit * page],'total':total}}
                 else:
-                    if limit * page <= len(self.conditions):
-                        data = {"code": 200, "data": {"historyDataList":self.conditions[limit * (page - 1):limit * page],'total':len(self.conditions[limit * (page - 1):limit * page])}}
+                    if len(self.conditions) > limit * (page - 1) and len(self.conditions) < limit * page:
+                        data = {"code": 200, "data": {"historyDataList":self.conditions[limit * (page - 1):],'total':total}}
                     else:
-                        if len(self.conditions) > limit * (page - 1) and len(self.conditions) < limit * page:
-                            data = {"code": 200, "data": {"historyDataList":self.conditions[limit * (page - 1):],'total':len(self.conditions[limit * (page - 1):])}}
-                        else:
-                            data = {"code": 2001, "data": []}
+                        data = {"code": 2001, "data": []}
                 return data
         except Exception as e:
             print(e)
