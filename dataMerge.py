@@ -19,8 +19,7 @@ mergeData['id'] = range(1,len(mergeData.index)+1)
 mergeData.set_index('id',inplace=True)
 count = 0
 with eng.connect() as con:
-    con.execute('delete from historydatas where id > 0 ')
-    con.execute('alter table historydatas auto_increment = 1')
+    con.execute('truncate table historydatas')
     for i in mergeData.index:
         res = con.execute("insert into historydatas (devName,devId,dataPointName,createTime,value,groupName,alarm,type)"
                           "values (%s,%s,%s,%s,%s,%s,%s,%s)",('4G模块','00016720001234567892',str(mergeData['nodeFlag'][i]),str(mergeData['time'][i]),str(mergeData['RSSI'][i]),'设备组1','1','0'))
