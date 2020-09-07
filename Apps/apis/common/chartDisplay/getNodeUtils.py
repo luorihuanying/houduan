@@ -253,5 +253,10 @@ class getNode():
 
 
 if __name__ == '__main__':
-    test = getNode()
-    test.getIotMonthData()
+    h = [1,2,3,4]
+    h.pop()
+    print(h)
+
+
+    # test = getNode()
+    # test.getIotMonthData()
