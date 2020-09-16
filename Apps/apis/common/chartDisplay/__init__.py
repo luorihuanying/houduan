@@ -6,7 +6,9 @@ from Apps.apis.common.chartDisplay.sensorDataApi import getZhiShang1,getTianQi,g
 getChartDataApi = Api(prefix="/cms")
 
 getChartDataApi.add_resource(getZhiShang1, "/getZhiShang1Api/")
+
 getChartDataApi.add_resource(getTianQi, "/getTianQiApi/")
+
 getChartDataApi.add_resource(getCamera, "/getCameraApi/")
 getChartDataApi.add_resource(getDataDay, "/getDataDayApi/")
 getChartDataApi.add_resource(getDataMonth, "/getDataMonthApi/")

@@ -8,7 +8,10 @@ from hashlib import sha1
 import random
 import string
 import numpy as np
-
+import os, base64
+import requests as req
+from PIL import Image
+from io import BytesIO
 import requests
 
 
@@ -195,7 +198,7 @@ class getCameraData:
         url = self.base_url + 'clients/' + self.account + '/devices/' + self.number + '/datapoints/time?begin=' + begin + '&end=' + end + '&encoding=json&order=asc' + self.parameter
         r = requests.get(url, headers=self.headers)
         datapoints = r.json().get('datapoints', None)
-        newest = {'wendu':'','qiya':'','guangqiang':'','shijian':''}
+        newest = {'wendu': '', 'qiya': '', 'guangqiang': '', 'shijian': ''}
         dd = datapoints[::-1]
         for i in dd:
             if 'battery' in i['data']:
@@ -229,7 +232,10 @@ class getCameraData:
                 ill.append(i['data']['illumination'])
                 pre.append(i['data']['pressure'])
                 tem.append(i['data']['temperature'])
-        avgMaxMin = [[np.max(hum),np.min(hum),round(np.average(hum),4)],[np.max(ill),np.min(ill),round(np.average(ill),4)],[np.max(pre),np.min(pre),round(np.average(pre),4)],[np.max(tem),np.min(tem),round(np.average(tem),4)]]
+        avgMaxMin = [[np.max(hum), np.min(hum), round(np.average(hum), 4)],
+                     [np.max(ill), np.min(ill), round(np.average(ill), 4)],
+                     [np.max(pre), np.min(pre), round(np.average(pre), 4)],
+                     [np.max(tem), np.min(tem), round(np.average(tem), 4)]]
         ti = self.getHour()
         for i in range(len(ti)):
             for j in range(len(t)):
@@ -238,7 +244,7 @@ class getCameraData:
                     illumination[i] = ill[j]
                     pressure[i] = pre[j]
                     temperature[i] = tem[j]
-        return [ti, humidity, illumination, pressure, temperature,newest,avgMaxMin]
+        return [ti, humidity, illumination, pressure, temperature, newest, avgMaxMin]
 
     # 查询设备期间数据  月
     def queryEquipmentStaMonth(self, begin, end):
@@ -246,7 +252,7 @@ class getCameraData:
             begin) + '&end=' + str(int(end)) + '&order=asc' + self.parameter
         r = requests.get(url, headers=self.headers)
         datapoints = r.json().get('datapoints', None)
-        ha, hm, hmi, ia, im, imi, pa, pm, pmi, ta, tm, tmi,sun = [], [], [], [], [], [], [], [], [], [], [], [],[]
+        ha, hm, hmi, ia, im, imi, pa, pm, pmi, ta, tm, tmi, sun = [], [], [], [], [], [], [], [], [], [], [], [], []
         for i in range(30):
             ha.append(None)
             hm.append(None)
@@ -267,7 +273,7 @@ class getCameraData:
                 'pressure': {'average': pa, 'max': pm, 'min': pmi},
                 'temperature': {'average': ta, 'max': tm, 'min': tmi},
                 'date': ti,
-                'sunshine':sun }
+                'sunshine': sun}
         for i in range(len(tmi)):
             for j in range(len(datapoints)):
                 timeArray = time.localtime(datapoints[j]['created_at'])
@@ -285,7 +291,7 @@ class getCameraData:
                     data['temperature']['average'][i] = datapoints[j]['data']['temperature']['average']
                     data['temperature']['max'][i] = datapoints[j]['data']['temperature']['max']
                     data['temperature']['min'][i] = datapoints[j]['data']['temperature']['min']
-                    data['sunshine'][i] = int(datapoints[j]['data']['sunshine']/3600)
+                    data['sunshine'][i] = int(datapoints[j]['data']['sunshine'] / 3600)
         return data
 
     # 查询设备期间数据  年
@@ -373,7 +379,45 @@ class getCameraData:
                     break
         return data
 
+    def downloadImg(self):
+        path = 'C:\\Users\\A07\Desktop\\商用传感器数据\\扶绥FM1摄像头\\图像'
+        # end = int(time.time())
+        # begin = end - 604800 - 1
+        begin = 1600001224
+        end = begin + 604800-1
+        for i in range(1):
+            url = self.base_url + 'clients/' + self.account + '/devices/' + self.number + '/datapoints/time?begin=' + str(
+                begin) + '&end=' + str(end) + '&encoding=json' + self.parameter
+            r = requests.get(url, headers=self.headers)
+            datapoints = r.json().get('datapoints', None)
+            if datapoints != None:
+                for d in range(len(datapoints)):
+                    if 'image' in datapoints[d]['data'].keys():
+                        timeArray = time.localtime(datapoints[d]['created_at'])
+                        revTime = time.strftime("%Y-%m-%d %H:%M:%S", timeArray)
+                        revTime = revTime[0:4] + revTime[5:7] + revTime[8:10] + revTime[11:13] + revTime[
+                                                                                                 14:16] + revTime[17:19]
+                        imgUrl = datapoints[d]['data']['image']
+                        response = req.get(imgUrl)  # 将这个图片保存在内存
+                        # 得到这个图片的base64编码
+                        ls_f = base64.b64encode(BytesIO(response.content).read()).decode('utf-8')
+                        # 打印出这个base64编码
+                        # print(ls_f)
+                        print(revTime)
+                        #########################
+                        # 下面是将base64编码进行解码
+                        imgdata = base64.b64decode(ls_f)
+                        # 将它用写入一个图片文件即可保存
+                        file = open(path + "\\" + revTime + '.jpg', 'wb')
+                        file.write(imgdata)
+                        # 关闭这个文件
+                        file.close()
+            begin = end+1
+            end = begin + 604800-1
+            print('***************************************************************************************')
+            print(begin,end)
+
 
 if __name__ == '__main__':
     test = getCameraData()
-    test.queryEquipmentStaMonth(1598708175,1598794575)
+    # test.downloadImg()

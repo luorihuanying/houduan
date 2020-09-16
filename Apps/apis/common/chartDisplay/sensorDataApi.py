@@ -76,7 +76,13 @@ cameraDataMonth = {'humidity': fields.Nested(CDM),
                    'date': fields.List(fields.String),
                    'sunshine': fields.List(fields.Integer)}
 cameraDataMonth_fields = {'code': fields.Integer, 'data': fields.Nested(cameraDataMonth)}
-
+cameraDataYear = {'humidity': fields.Nested(CDM),
+                   'illumination': fields.Nested(CDM),
+                   'pressure': fields.Nested(CDM),
+                   'temperature': fields.Nested(CDM),
+                   'date': fields.List(fields.String)
+                   }
+cameraDataYear_fields = {'code': fields.Integer, 'data': fields.Nested(cameraDataYear)}
 pic = {'createTime': fields.List(fields.String),
        'image': fields.List(fields.String),
        'latestPic': fields.String}
@@ -160,7 +166,7 @@ class getDataYear(Resource, getCameraData):
         if rank:
             year = getCameraData.fetchTimeInterval(self, 'year')
             data = getCameraData.queryEquipmentStaYear(self, year)
-            return marshal({'code': 200, 'data': data}, cameraDataMonth_fields)
+            return marshal({'code': 200, 'data': data}, cameraDataYear_fields)
         else:
             return marshal({'code': 5000, 'msg': '无权限'}, flag_fields)
 

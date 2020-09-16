@@ -79,8 +79,9 @@ class histotydataHandle():
                                 "groupName":row.groupName,
                                 "value": row.value}
                         self.conditions.append(data)
-                    if len(self.conditions)>1000:
-                        self.conditions = self.conditions[:1000]
+                    self.conditions = self.conditions[::-1]
+                    if len(self.conditions)>200:
+                        self.conditions = self.conditions[:200]
                     data = {"code": "200", "data": {"historyDataList":self.conditions,'total':len(self.conditions)}}
                     return data
             else:
@@ -119,9 +120,10 @@ class histotydataHandle():
                                     self.conditions = []
                     else:
                         self.conditions = []
+                self.conditions = self.conditions[::-1]
                 total = len(self.conditions)
-                if len(self.conditions)>1000:
-                    self.conditions = self.conditions[:1000]
+                if len(self.conditions)>200:
+                    self.conditions = self.conditions[:200]
                 if len(self.conditions) <= limit:
                     data = {"code": 200, "data": {"historyDataList":self.conditions,'total':total}}
                 if limit * page <= len(self.conditions):

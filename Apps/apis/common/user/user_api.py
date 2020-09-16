@@ -96,6 +96,8 @@ class userLogin(Resource):
         args = parser.parse_args()
         username = args.get("username")
         password = args.get("password")
+
+        print(username,password)
         with eng.connect() as con:
             user = con.execute("select * from cms_user where username = " + "'" + username + "'").fetchone()
             if user and password == user.password:
